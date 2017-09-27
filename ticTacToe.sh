@@ -29,15 +29,15 @@ done
 ### utility functions ###
 
 # pretty printer
-# usage: print [args ...]
-print() {
+# usage: pprint [args ...]
+pprint() {
     echo -e "$*"
 }
 
 # pretty print the current board state
 # usage: printBoard
 printBoard() {
-    print "\n $b1 | $b2 | $b3 \n---+---+---\n $b4 | $b5 | $b6 \n---+---+---\n $b7 | $b8 | $b9 \n" \
+    pprint "\n $b1 | $b2 | $b3 \n---+---+---\n $b4 | $b5 | $b6 \n---+---+---\n $b7 | $b8 | $b9 \n" \
 	| tr $empty$x$o "$emptyD$xD$oD"
 }
 
@@ -75,7 +75,7 @@ check2Seq() {
 # usage: emptySqs
 emptySqs() {
     for i in `seq 1 9`; do	
-	eval test '$b'$i -eq $empty && print $i' \c'
+	eval test '$b'$i -eq $empty && pprint $i' \c'
     done
 }
 
@@ -125,7 +125,7 @@ finished() {
 # usage: getUserClaim player
 getUserClaim() {
     while true; do
-	print `echo $1 | tr $x$o "$xD$oD"`", please select an empty square (1-9): \c"
+	pprint `echo $1 | tr $x$o "$xD$oD"`", please select an empty square (1-9): \c"
 	read claim
 	if expr "$claim" : '[1-9]$' >/dev/null && makeClaim $claim $1; then
 	    return
@@ -224,7 +224,7 @@ getExpClaim() {
 # have computer play as an expert player (brute force with full game tree)
 # usage: getExpertClaim player
 getExpertClaim() {
-    return
+    eval expertStrategy.sh $1 `echo '$b'{1..9}`
 }
 
 # have AI claim a square (claim depends on selected difficulty)
@@ -259,15 +259,15 @@ makeClaim() {
 
 # preamble
 preamble="### Time to play tic-tac-toe! ###\n"
-print "$preamble"
+pprint "$preamble"
 
 # choose type of adversary
 prompt="Select a human or computer adversary [H / C]: "
-print "${prompt}\c"
+pprint "${prompt}\c"
 read adversary
 while test `expr "$adversary" : '[HhCc]$'` -eq 0; do
     echo "Invalid selection!"
-    print "${prompt}\c"
+    pprint "${prompt}\c"
     read adversary
 done
 
@@ -275,25 +275,25 @@ done
 if expr $adversary : '[Cc]' >/dev/null; then
     
     prompt="Select a difficulty level [novice: 1, intermediate: 2, experienced: 3, expert: 4]: "
-    print "${prompt}\c"
+    pprint "${prompt}\c"
     read difficulty
     while test `expr "$difficulty" : '[1-4]$'` -eq 0; do
 	echo "Invalid selection!"
-	print "${prompt}\c"
+	pprint "${prompt}\c"
 	read difficulty
     done
 
     prompt="Play as X? [Y / N] "
-    print "${prompt}\c"
+    pprint "${prompt}\c"
     read first
     while test `expr "$first" : '[YyNn]$'` -eq 0; do
 	echo "Invalid selection!"
-	print "${prompt}\c"
+	pprint "${prompt}\c"
 	read first
     done    
 fi
 
-print "\nThe board squares are designated as follows:\n 1 | 2 | 3 \n---+---+---\n 4 | 5 | 6 \n---+---+---\n 7 | 8 | 9\n\nX plays first..."
+pprint "\nThe board squares are designated as follows:\n 1 | 2 | 3 \n---+---+---\n 4 | 5 | 6 \n---+---+---\n 7 | 8 | 9\n\nX plays first..."
 
 ### main program loop ###
 
