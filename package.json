@@ -1,0 +1,23 @@
+{
+  "name": "gabriellesc-tic-tac-toe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.heroku.com/gabriellesc-tic-tac-toe.git"
+  },
+  "keywords": [],
+  "author": "gabriellesc <gabriellesinghcadieux@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "bufferutil": "^3.0.2",
+    "express": "^4.15.5",
+    "shelljs": "^0.7.8",
+    "utf-8-validate": "^3.0.3",
+    "ws": "^3.2.0"
+  }
+}
