@@ -224,7 +224,7 @@ getExpClaim() {
 # have computer play as an expert player (brute force with full game tree)
 # usage: getExpertClaim player
 getExpertClaim() {
-    claim=$(eval expertStrategy.py $1 `echo '$b'{1..9}`)
+    claim=$(eval python3 expertStrategy.py $1 `echo '$b'{1..9}`)
     # add 1 to the claim because it is produced by Python list indexing (0-based)
     claim=`expr $claim + 1`
 
