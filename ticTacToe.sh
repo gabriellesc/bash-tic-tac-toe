@@ -225,6 +225,9 @@ getExpClaim() {
 # usage: getExpertClaim player
 getExpertClaim() {
     claim=$(eval expertStrategy.py $1 `echo '$b'{1..9}`)
+    # add 1 to the claim because it is produced by Python list indexing (0-based)
+    claim=`expr $claim + 1`
+
     makeClaim $claim $1
     echo "##" `echo $1 | tr $x$o "$xD$oD"` "chose square $claim ##"
 }
