@@ -89,7 +89,7 @@ finished() {
     #   rows: (1 2 3) (4 5 6) (7 8 9)
     #   columns: (1 4 7) (2 5 8) (3 6 9)
     #   diagonals: (1 5 9) (3 5 7)
-    paths='123 456 789 147 258 369 147 258 369 159 357'
+    paths='123 456 789 147 258 369 159 357'
 
     for path in $paths; do
 	if test $winner -ne $empty; then
@@ -151,7 +151,7 @@ getIntClaim() {
     #   rows: (1 2 3) (4 5 6) (7 8 9)
     #   columns: (1 4 7) (2 5 8) (3 6 9)
     #   diagonals: (1 5 9) (3 5 7)
-    paths='123 456 789 147 258 369 147 258 369 159 357'
+    paths='123 456 789 147 258 369 159 357'
 
     opponent=''
     
@@ -224,7 +224,7 @@ getExpClaim() {
 # have computer play as an expert player (brute force with full game tree)
 # usage: getExpertClaim player
 getExpertClaim() {
-    claim=$(eval expertStrategy.sh $1 `echo '$b'{1..9}`)
+    claim=$(eval expertStrategy.py $1 `echo '$b'{1..9}`)
     makeClaim $claim $1
     echo "##" `echo $1 | tr $x$o "$xD$oD"` "chose square $claim ##"
 }
