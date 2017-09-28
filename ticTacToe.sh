@@ -5,7 +5,7 @@ PATH=$PATH:'.'
 # Bash implementation of tic-tac-toe, with AI logic based on:
 # https://blog.ostermiller.org/tic-tac-toe-strategy
 #
-# 26.09.2017 G.S.C.
+# 27.09.2017 G.S.C.
 #######################################################################
 
 # intermediate representation of different board square values
@@ -224,7 +224,9 @@ getExpClaim() {
 # have computer play as an expert player (brute force with full game tree)
 # usage: getExpertClaim player
 getExpertClaim() {
-    eval expertStrategy.sh $1 `echo '$b'{1..9}`
+    claim=$(eval expertStrategy.sh $1 `echo '$b'{1..9}`)
+    makeClaim $claim $1
+    echo "##" `echo $1 | tr $x$o "$xD$oD"` "chose square $claim ##"
 }
 
 # have AI claim a square (claim depends on selected difficulty)
