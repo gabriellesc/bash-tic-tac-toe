@@ -28,7 +28,7 @@ wss.on('connection', function connection(ws, req) {
     ws.on('close', code => {
 	console.log(`connection closed with code ${code}`);
 	child.kill();
-    }):
+    });
 
     // when the child puts data on stdout, send it through the websocket
     child.stdout.on('data', data => {
