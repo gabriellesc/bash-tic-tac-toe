@@ -15,28 +15,35 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', function connection(ws, req) {
     console.log('Client connected');
 
-    const location = url.parse(req.url, true);
-    // You might use location.query.access_token to authenticate or share sessions
-    // or req.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
-
+    // exec a new child that runs the script using Bash
     const child = exec(`${__dirname}/ticTacToe.sh`, { shell: '/bin/bash' });
 
-    ws.on('message', function incoming(message) {
+    // when input is received through the websocket, send it to the child's stdin
+    ws.on('message', message => {
 	console.log('received: %s', message);
 	child.stdin.write(message.replace(/\r/g, '\n'));
     });
-    
-    child.stdout.on('data', (data) => {
+
+    // when the connection is closed, terminate the child
+    ws.on('close', code => {
+	console.log(`connection closed with code ${code}`);
+	child.kill();
+    }):
+
+    // when the child puts data on stdout, send it through the websocket
+    child.stdout.on('data', data => {
 	console.log(`stdout: ${data}`);
 	ws.send(data.replace(/\n/g, '\r\n'));
     });
 
-    child.stderr.on('data', (data) => {
+    // when the child puts data on stderr, send it through the websocket
+    child.stderr.on('data', data => {
 	console.log(`stderr: ${data}`);
 	ws.send(data.replace(/\n/g, '\r\n'));
     });
 
-    child.on('close', (code) => {
+    // when the child process terminates, close the websocket connection
+    child.on('close', code => {
 	console.log(`child process exited with code ${code}`);
 	ws.close();
     });
