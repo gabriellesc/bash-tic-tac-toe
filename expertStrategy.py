@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 #######################################################################
 # Python script to produce a weighted tic-tac-toe game tree and
 # serialize it using pickle, if a serialized tree file does not
@@ -13,6 +12,7 @@
 
 import pickle
 import sys
+import os
 
 SERIALFNAME = 'tree'
 
@@ -72,14 +72,15 @@ def buildTree(node, player):
             winner = isFinished(board)
             
             # game is finished so insert leaf into tree
+            # make leaf weight inversely proportional to its depth
             if winner:
                 # player 1 won
                 if winner == 1:
-                    child.weight = 1
+                    child.weight = 10 - board.count(0)
 
                 # player 2 won
                 elif winner == 2:
-                    child.weight = -1
+                    child.weight = -(10 - board.count(0))
 
                 # stalemate
                 elif winner == -1:
@@ -118,14 +119,24 @@ def printLeaves(node):
         for sq in range(9):
             printLeaves(node.children[sq])
 
-def weightInnerNodes(node):
+def weightInnerNodes(node, player):
     if (not node):
         return 0
-    
-    # reached a leaf
-    if (node.weight == None):
-        node.weight = sum([weightInnerNodes(child) for child in node.children])
 
+    # inner node
+    if (node.weight == None):
+        nextPlayer = (1 if player == 2 else 2)
+
+#        node.weight = sum([weightInnerNodes(child, nextPlayer) for child in node.children])
+        # first player, so maximize weight
+        if (player == 1):
+            node.weight = max([weightInnerNodes(child, nextPlayer) for child in node.children])
+            
+        # second player, so minimize weight
+        else:
+            node.weight = min([weightInnerNodes(child, nextPlayer) for child in node.children])
+            
+    # reached a leaf
     return node.weight
 
 def optimalNextMove(tree):
@@ -167,20 +178,30 @@ def optimalNextMove(tree):
 
     return optMove
 
+def createSerialFile():
+    tree = buildTree(Node([0]*9), 1)
+    weightInnerNodes(tree, 1)
+    print(optimalNextMove(tree))
+
+    # serialize the new tree
+    serialf = open(SERIALFNAME, 'wb')
+    pickle.dump(tree, serialf)    
+
+    
 # try to open an existing serial tree file
 try:
     serialf = open(SERIALFNAME, 'rb')
     
 except FileNotFoundError:
-    tree = buildTree(Node([0]*9), 1)
-    weightInnerNodes(tree)    
-    print(optimalNextMove(tree))
+    createSerialFile()
 
-    # serialize the new tree
-    serialf = open(SERIALFNAME, 'wb')
-    pickle.dump(tree, serialf)
-
-# if a serial tree file already exists, deserialize it    
 else:
-    tree = pickle.load(serialf)
-    print(optimalNextMove(tree))
+    # if this script is newer than the existing serial tree file, overwrite it
+    if os.stat(SERIALFILENAME).st_mtime < os.stat(sys.argv[0]).st_mtime:
+        serialf.close()
+        createSerialFile()
+
+    # if a serial tree file already exists, deserialize it        
+    else:
+        tree = pickle.load(serialf)
+        print(optimalNextMove(tree))
