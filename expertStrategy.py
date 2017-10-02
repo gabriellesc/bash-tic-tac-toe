@@ -127,7 +127,6 @@ def weightInnerNodes(node, player):
     if (node.weight == None):
         nextPlayer = (1 if player == 2 else 2)
 
-#        node.weight = sum([weightInnerNodes(child, nextPlayer) for child in node.children])
         # first player, so maximize weight
         if (player == 1):
             node.weight = max([weightInnerNodes(child, nextPlayer) for child in node.children])
@@ -197,7 +196,7 @@ except FileNotFoundError:
 
 else:
     # if this script is newer than the existing serial tree file, overwrite it
-    if os.stat(SERIALFILENAME).st_mtime < os.stat(sys.argv[0]).st_mtime:
+    if os.stat(SERIALFNAME).st_mtime < os.stat(sys.argv[0]).st_mtime:
         serialf.close()
         createSerialFile()
 
