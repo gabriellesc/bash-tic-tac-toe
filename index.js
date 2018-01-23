@@ -24,7 +24,7 @@ wss.on('connection', function connection(ws, req) {
 
     // when input is received through the websocket, send it to the child's stdin
     ws.on('message', message => {
-	console.log('received: %s', message);
+	console.log(`received: ${message}`);
 	child.stdin.write(message.replace(/\r/g, '\n'));
     });
 
@@ -67,5 +67,5 @@ const interval = setInterval(function ping() {
 }, 300000);
 
 server.listen(PORT, function listening() {
-    console.log('Listening on %d', PORT);
+    console.log(`Listening on ${PORT}`);
 });
