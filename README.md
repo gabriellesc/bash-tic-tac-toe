@@ -49,3 +49,6 @@ This creates potential security vulnerabilities, mitigated by:
 
 The server is currently accessible at [wss://bash-tic-tac-toe.herokuapp.com/](wss://bash-tic-tac-toe.herokuapp.com/).  
 A client interface exists at [https://gabriellesc.github.io/ticTacToe/index.html](https://gabriellesc.github.io/ticTacToe/index.html), which uses [Xterm.js](https://xtermjs.org/) to emulate the experience of interacting directly with the Bash script in a terminal.
+
+## License
+Licensed under the MIT License. See [LICENSE](LICENSE) for more information.
