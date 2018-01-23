@@ -18,27 +18,30 @@ Each time the script is called, it receives the current state of the game board,
 The game can be played against another human player (using the same client), or against an AI.
 
 The AI can play at each of these expertise levels (based on [this blog post](https://blog.ostermiller.org/tic-tac-toe-strategy) by Stephen Ostermiller):
-- *Novice*: chooses random moves
-- *Intermediate*: blocks an opponent's three-in-a-row or takes any three-in-a-row, if it can; otherwise, chooses random moves
-- *Experienced*: plays at the intermediate level, but chooses the best possible opening move
-- *Expert*: plays a solved game
+- **Novice**: chooses random moves
+- **Intermediate**: blocks an opponent's three-in-a-row or takes any three-in-a-row, if it can; otherwise, chooses random moves
+- **Experienced**: plays at the intermediate level, but chooses the best possible opening move
+- **Expert**: plays a solved game
 
 ### Program details of interest
 
 1. The primary Bash script stores the current board state in a "fake" associative array.  
-That is, the state of each board square is stored as a variable with a common prefix and a unique (indexing) suffix, eg. `square1`, `square2`, etc.  
-To access the state of an arbitrary square (one whose index is stored in another variable), we need to evaluate `$square$index`. This means forcing variable expansion to occur in two stages: first, we need to expand `$index` to produce `$square1`, and then we need to expand `$square1`.  
-We do this using `eval` and quoting, eg.
-```
-eval echo '$square'$index
-```
-In this example, `eval` causes `$index` to be expanded but not `$square` because it is quoted, and then causes the new command `echo $square1` to be executed.
+That is, the state of each board square is stored as a variable with a common prefix and a unique (indexing) suffix, eg. `square1`, `square2`, etc.
 
-2. To receive user input from stdin, the primary Bash script uses `read`. Messages from the client are passed directly to the stdin of the Bash process without being sanitized or validated (subject to change - see #2).  
+    To access the state of an arbitrary square (one whose index is stored in another variable), we need to evaluate `$square$index`. This means forcing variable expansion to occur in two stages: first, we need to expand `$index` to produce `$square1`, and then we need to expand `$square1`.
+   
+    We do this using `eval` and quoting, eg.
+    ```
+    eval echo '$square'$index
+    ```
+
+    In this example, `eval` causes `$index` to be expanded but not `$square` because it is quoted, and then causes the new command `echo $square1` to be executed.
+
+2. To receive user input from stdin, the primary Bash script uses `read`. Messages from the client are passed directly to the stdin of the Bash process without being sanitized or validated (subject to change - see [#2](https://github.com/gabriellesc/bash-tic-tac-toe/issues/2)).  
 This creates potential security vulnerabilities, mitigated by:
-- the program accepts a limited range of (single character) input
-- the result of `read` is double-quoted when first used
-- the result of `read` is immediately checked against a strict regex
+   - the program accepts a limited range of (single character) input
+   - the result of `read` is double-quoted when first used
+   - the result of `read` is immediately checked against a strict regex
 
 3. The secondary Python script builds a game tree for tic-tac-toe and assigns weights to nodes using the [minimax algorithm](http://www.flyingmachinestudios.com/programming/minimax/).
 
