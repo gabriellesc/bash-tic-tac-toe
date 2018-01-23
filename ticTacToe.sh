@@ -21,12 +21,15 @@ oD='O'
 # move counter
 moves=0
 
-# create variables b1-9 representing the squares and set them to empty
-for i in `seq 1 9`; do
-    eval b$i=$empty
-done
-
 ### utility functions ###
+
+# create variables b1-9 representing the squares and set them to empty
+# usage: initBoard
+initBoard() {
+    for i in `seq 1 9`; do
+	eval b$i=$empty
+    done
+}
 
 # pretty printer
 # usage: pprint [args ...]
@@ -259,84 +262,107 @@ makeClaim() {
     eval b$1=$2
 }
 
+# play a game
+# usage: play
+play() {
+    
+    ### configuration ###
 
-### configuration ###
+    # preamble
+    preamble="\n### Time to play tic-tac-toe! ###\n"
+    pprint "$preamble"
 
-# preamble
-preamble="### Time to play tic-tac-toe! ###\n"
-pprint "$preamble"
-
-# choose type of adversary
-prompt="Select a human or computer adversary [H / C]: "
-pprint "${prompt}\c"
-read adversary
-while test `expr "$adversary" : '[HhCc]$'` -eq 0; do
-    echo "Invalid selection!"
+    # choose type of adversary
+    prompt="Select a human or computer adversary [H / C]: "
     pprint "${prompt}\c"
     read adversary
-done
-
-# choose difficulty level of computer adversary and who plays first
-if expr $adversary : '[Cc]' >/dev/null; then
-    
-    prompt="Select a difficulty level [novice: 1, intermediate: 2, experienced: 3, expert: 4]: "
-    pprint "${prompt}\c"
-    read difficulty
-    while test `expr "$difficulty" : '[1-4]$'` -eq 0; do
+    while test `expr "$adversary" : '[HhCc]$'` -eq 0; do
 	echo "Invalid selection!"
 	pprint "${prompt}\c"
-	read difficulty
+	read adversary
     done
 
-    prompt="Play as X? [Y / N] "
-    pprint "${prompt}\c"
-    read first
-    while test `expr "$first" : '[YyNn]$'` -eq 0; do
-	echo "Invalid selection!"
+    # choose difficulty level of computer adversary and who plays first
+    if expr $adversary : '[Cc]' >/dev/null; then
+	
+	prompt="Select a difficulty level [novice: 1, intermediate: 2, experienced: 3, expert: 4]: "
+	pprint "${prompt}\c"
+	read difficulty
+	while test `expr "$difficulty" : '[1-4]$'` -eq 0; do
+	    echo "Invalid selection!"
+	    pprint "${prompt}\c"
+	    read difficulty
+	done
+
+	prompt="Play as X? [Y / N] "
 	pprint "${prompt}\c"
 	read first
-    done    
-fi
+	while test `expr "$first" : '[YyNn]$'` -eq 0; do
+	    echo "Invalid selection!"
+	    pprint "${prompt}\c"
+	    read first
+	done    
+    fi
 
-pprint "\nThe board squares are designated as follows:\n 1 | 2 | 3 \n---+---+---\n 4 | 5 | 6 \n---+---+---\n 7 | 8 | 9\n\nX plays first..."
+    pprint "\nThe board squares are designated as follows:\n 1 | 2 | 3 \n---+---+---\n 4 | 5 | 6 \n---+---+---\n 7 | 8 | 9\n\nX plays first..."
+
+    initBoard
+
+    ### main play loop ###
+
+    while true; do
+	
+	# get player 1's claim
+	case $adversary$first in
+	    [Hh]) getUserClaim $x
+		  ;;
+	    [Cc][Yy]) getUserClaim $x
+		      ;;
+	    *) getAIClaim $difficulty $x
+	       ;;
+	esac
+
+	moves=`expr $moves + 1`
+	printBoard
+	
+	# if we are done, then exit the main
+	if finished; then
+	    return
+	fi
+
+	# get player 2's claim
+	case $adversary$first in
+	    [Hh]) getUserClaim $o
+		  ;;
+	    [Cc][Nn]) getUserClaim $o
+		      ;;
+	    *) getAIClaim $difficulty $o
+	       ;;
+	esac
+
+	moves=`expr $moves + 1`
+	printBoard
+	
+	# if we are done, then exit the main
+	if finished; then
+	    return
+	fi
+    done
+}
 
 ### main program loop ###
 
-while true; do
-    
-    # get player 1's claim
-    case $adversary$first in
-	[Hh]) getUserClaim $x
-	      ;;
-	[Cc][Yy]) getUserClaim $x
-		  ;;
-	*) getAIClaim $difficulty $x
-	   ;;
-    esac
+replay=Y
+while expr $replay : '[Yy]' >/dev/null; do
+    play
 
-    moves=`expr $moves + 1`
-    printBoard
-    
-    # if we are done, then terminate
-    if finished; then
-	exit
-    fi
-
-    # get player 2's claim
-    case $adversary$first in
-	[Hh]) getUserClaim $o
-	      ;;
-	[Cc][Nn]) getUserClaim $o
-		  ;;
-	*) getAIClaim $difficulty $o
-	   ;;
-    esac
-
-    moves=`expr $moves + 1`
-    printBoard
-    
-    # if we are done, then terminate
-    if finished; then
-	exit
-    fi
+    # once we are done playing, prompt for a new game
+    prompt="\nPlay again? [Y / N] "
+    pprint "${prompt}\c"
+    read replay
+    while test `expr "$replay" : '[YyNn]$'` -eq 0; do
+	echo "Invalid selection!"
+	pprint "${prompt}\c"
+	read replay
+    done
 done
