@@ -10,10 +10,14 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ server, clientTracking: true });
 
 wss.on('connection', function connection(ws, req) {
     console.log('Client connected');
+
+    // verify that this remote endpoint is still responsive
+    ws.isAlive = true;
+    ws.on('pong', () => (ws.isAlive = true));
 
     // exec a new child that runs the script using Bash
     const child = exec(`${__dirname}/ticTacToe.sh`, { shell: '/bin/bash' });
@@ -48,6 +52,16 @@ wss.on('connection', function connection(ws, req) {
 	ws.close();
     });
 });
+
+// verify that each client is still responsive at intervals
+const interval = setInterval(function ping() {
+    wss.clients.forEach(function each(ws) {
+	if (ws.isAlive === false) return ws.terminate();
+
+	ws.isAlive = false;
+	ws.ping(() => {});
+    });
+}, 300000);
 
 server.listen(PORT, function listening() {
     console.log('Listening on %d', PORT);
