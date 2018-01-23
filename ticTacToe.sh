@@ -18,9 +18,6 @@ emptyD=' '
 xD='X'
 oD='O'
 
-# move counter
-moves=0
-
 ### utility functions ###
 
 # create variables b1-9 representing the squares and set them to empty
@@ -266,7 +263,7 @@ makeClaim() {
 # usage: play
 play() {
     
-    ### configuration ###
+    ### configuration/initialization ###
 
     # preamble
     preamble="\n### Time to play tic-tac-toe! ###\n"
@@ -306,6 +303,7 @@ play() {
 
     pprint "\nThe board squares are designated as follows:\n 1 | 2 | 3 \n---+---+---\n 4 | 5 | 6 \n---+---+---\n 7 | 8 | 9\n\nX plays first..."
 
+    moves=0 # move counter
     initBoard
 
     ### main play loop ###
