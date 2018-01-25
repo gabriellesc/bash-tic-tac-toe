@@ -1,5 +1,6 @@
+
 {
-  "name": "gabriellesc-tic-tac-toe",
+  "name": "bash-tic-tac-toe",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,11 +9,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.heroku.com/gabriellesc-tic-tac-toe.git"
+    "url": "https://github.com/gabriellesc/bash-tic-tac-toe.git"
   },
   "keywords": [],
   "author": "gabriellesc <gabriellesinghcadieux@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bufferutil": "^3.0.2",
     "express": "^4.15.5",
