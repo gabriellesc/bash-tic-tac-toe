@@ -15,10 +15,10 @@
   "author": "gabriellesc <gabriellesinghcadieux@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "bufferutil": "^3.0.2",
+    "bufferutil": "^4.0.3",
     "express": "^4.15.5",
     "shelljs": "^0.7.8",
     "utf-8-validate": "^3.0.3",
-    "ws": "^3.2.0"
+    "ws": "^8.2.2"
   }
 }
